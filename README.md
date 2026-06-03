@@ -24,7 +24,7 @@
 * *(More actions coming soon)*
 
 ## 📸 Screenshots
-*(Note to self: Take a screenshot of the dark mode UI and put it here)*
+
 <img width="300" height="600" alt="WhatsApp Image 2026-06-03 at 11 25 50 PM" src="https://github.com/user-attachments/assets/886045f2-40ba-4d81-b5c0-1b06cfc634f9" />
 
 ## ⚙️ Installation & Setup
