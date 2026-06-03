@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Floating Wall</string>
+    <string name="accessibility_desc">Floating Wall: Map on-screen button to Volume and Screenshots.</string>
+    <string-array name="action_options">
+        <item>None</item>
+        <item>Show Volume Panel</item>
+        <item>Take Screenshot</item>
+    </string-array>
+</resources>
