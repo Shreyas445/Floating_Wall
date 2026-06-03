@@ -7,8 +7,8 @@
 **Floating Wall** is a lightweight, privacy-focused Android utility that bypasses OEM hardware limitations by mapping a floating on-screen button to powerful system actions using a custom multi-tap engine.
 
 ## 🚀 The Problem It Solves
-Many budget and mid-range Android devices (like the Samsung A-Series) lock their hardware interrupt signals (like fingerprint sensor swipes) at the Kernel/HAL level, preventing third-party apps from utilizing them.
-
+**This app is made for the person who had damaged their volume buttons**
+**User can trigger volume, screenshots from Floating button.**
 **Floating Wall** bypasses this by hijacking the native Android Accessibility button and injecting a custom time-delay engine to allow for 1-tap, 2-tap, and 3-tap physical macros—all without requiring Root access.
 
 ## ✨ Features
@@ -26,7 +26,7 @@ Many budget and mid-range Android devices (like the Samsung A-Series) lock their
 ## 📸 Screenshots
 *(Note to self: Take a screenshot of the dark mode UI and put it here)*
 ## ⚙️ Installation & Setup
-1. Download the latest `.apk` from the [Releases](link_to_releases) tab or clone this repository and build it via Android Studio.
+1. Download the latest `.apk` from the [Releases](https://github.com/Shreyas445/Floating_Wall/releases) tab or clone this repository and build it via Android Studio.
 2. Open the app and tap **Enable Accessibility**.
 3. Toggle the **Floating Wall shortcut** ON to reveal the green floating button.
 4. Select your preferred actions for 1, 2, and 3 taps in the app dashboard.
