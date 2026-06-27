@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Top Bar with Title and Menu Icon -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,10 +40,11 @@
                 android:background="?attr/selectableItemBackgroundBorderless"/>
         </RelativeLayout>
 
+        <!-- 1 Tap Setting -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1 TAP ACTION"
+            android:text="1 TAP ACTION &amp; DELAY"
             android:textColor="#8E8E93"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -51,16 +53,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="@drawable/rounded_card"
-            android:padding="8dp"
             android:layout_marginBottom="24dp">
-            <Spinner android:id="@+id/spinner1Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF"/>
+
+            <Spinner android:id="@+id/spinner1Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2C2C2E"/>
+            <Spinner android:id="@+id/spinner1TapDelay" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/delay_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
         </LinearLayout>
 
+        <!-- 2 Tap Setting -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2 TAPS ACTION"
+            android:text="2 TAPS ACTION &amp; DELAY"
             android:textColor="#8E8E93"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -69,16 +75,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="@drawable/rounded_card"
-            android:padding="8dp"
             android:layout_marginBottom="24dp">
-            <Spinner android:id="@+id/spinner2Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF"/>
+
+            <Spinner android:id="@+id/spinner2Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2C2C2E"/>
+            <Spinner android:id="@+id/spinner2TapDelay" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/delay_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
         </LinearLayout>
 
+        <!-- 3 Tap Setting -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3 TAPS ACTION"
+            android:text="3 TAPS ACTION &amp; DELAY"
             android:textColor="#8E8E93"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -87,12 +97,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:background="@drawable/rounded_card"
-            android:padding="8dp"
             android:layout_marginBottom="40dp">
-            <Spinner android:id="@+id/spinner3Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF"/>
+
+            <Spinner android:id="@+id/spinner3Tap" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/action_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2C2C2E"/>
+            <Spinner android:id="@+id/spinner3TapDelay" android:layout_width="match_parent" android:layout_height="50dp" android:entries="@array/delay_options" android:backgroundTint="#FFFFFF" android:paddingStart="8dp"/>
         </LinearLayout>
 
+        <!-- Buttons -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOpenSettings"
             android:layout_width="match_parent"

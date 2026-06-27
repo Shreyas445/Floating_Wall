@@ -2,6 +2,7 @@ package com.example.volumefixer2
 
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
@@ -22,25 +23,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val prefs = getSharedPreferences("FloatingWallPrefs", Context.MODE_PRIVATE)
+
         val spinner1 = findViewById<Spinner>(R.id.spinner1Tap)
+        val spinner1Delay = findViewById<Spinner>(R.id.spinner1TapDelay)
         val spinner2 = findViewById<Spinner>(R.id.spinner2Tap)
+        val spinner2Delay = findViewById<Spinner>(R.id.spinner2TapDelay)
         val spinner3 = findViewById<Spinner>(R.id.spinner3Tap)
+        val spinner3Delay = findViewById<Spinner>(R.id.spinner3TapDelay)
         val btnOpenSettings = findViewById<Button>(R.id.btnOpenSettings)
         val btnBattery = findViewById<Button>(R.id.btnBattery)
         val menuIcon = findViewById<TextView>(R.id.menuIcon)
 
-        // Load Preferences
         spinner1.setSelection(prefs.getInt("action_1", 1))
         spinner2.setSelection(prefs.getInt("action_2", 2))
         spinner3.setSelection(prefs.getInt("action_3", 0))
 
-        val listener = object : AdapterView.OnItemSelectedListener {
+        spinner1Delay.setSelection(prefs.getInt("delay_1", 0))
+        spinner2Delay.setSelection(prefs.getInt("delay_2", 0))
+        spinner3Delay.setSelection(prefs.getInt("delay_3", 0))
+
+        val actionListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 with(prefs.edit()) {
                     when (parent?.id) {
-                        R.id.spinner1Tap -> putInt("action_1", position)
-                        R.id.spinner2Tap -> putInt("action_2", position)
-                        R.id.spinner3Tap -> putInt("action_3", position)
+                        R.id.spinner1Tap -> { putInt("action_1", position); if (position == 3) showAppPickerDialog(1) }
+                        R.id.spinner2Tap -> { putInt("action_2", position); if (position == 3) showAppPickerDialog(2) }
+                        R.id.spinner3Tap -> { putInt("action_3", position); if (position == 3) showAppPickerDialog(3) }
                     }
                     apply()
                 }
@@ -48,20 +56,39 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        spinner1.onItemSelectedListener = listener
-        spinner2.onItemSelectedListener = listener
-        spinner3.onItemSelectedListener = listener
+        val delayListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                with(prefs.edit()) {
+                    when (parent?.id) {
+                        R.id.spinner1TapDelay -> putInt("delay_1", position)
+                        R.id.spinner2TapDelay -> putInt("delay_2", position)
+                        R.id.spinner3TapDelay -> putInt("delay_3", position)
+                    }
+                    apply()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
-        // Dropdown Menu Logic
+        spinner1.onItemSelectedListener = actionListener
+        spinner2.onItemSelectedListener = actionListener
+        spinner3.onItemSelectedListener = actionListener
+        spinner1Delay.onItemSelectedListener = delayListener
+        spinner2Delay.onItemSelectedListener = delayListener
+        spinner3Delay.onItemSelectedListener = delayListener
+
+        // The Updated Menu Logic
         menuIcon.setOnClickListener { view ->
             val popup = PopupMenu(this, view)
-            popup.menu.add(0, 1, 0, "How to Use")
-            popup.menu.add(0, 2, 0, "Privacy Policy")
+            popup.menu.add(0, 1, 0, "Default Volume")
+            popup.menu.add(0, 2, 0, "How to Use")
+            popup.menu.add(0, 3, 0, "Privacy Policy")
 
             popup.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    1 -> showHowToUseDialog()
-                    2 -> showPrivacyPolicyDialog()
+                    1 -> showDefaultVolumeDialog()
+                    2 -> showHowToUseDialog()
+                    3 -> showPrivacyPolicyDialog()
                 }
                 true
             }
@@ -84,31 +111,71 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // THE NEW DEFAULT VOLUME SELECTOR
+    private fun showDefaultVolumeDialog() {
+        val streamNames = arrayOf("Media Volume", "Ringtone", "Notifications", "Alarms", "System Volume", "In-Call Volume")
+        val streamValues = intArrayOf(
+            AudioManager.STREAM_MUSIC,
+            AudioManager.STREAM_RING,
+            AudioManager.STREAM_NOTIFICATION,
+            AudioManager.STREAM_ALARM,
+            AudioManager.STREAM_SYSTEM,
+            AudioManager.STREAM_VOICE_CALL
+        )
+
+        val prefs = getSharedPreferences("FloatingWallPrefs", Context.MODE_PRIVATE)
+        val currentSavedStream = prefs.getInt("default_volume_stream", AudioManager.STREAM_MUSIC)
+
+        // Find which radio button should be checked based on saved data
+        val currentIndex = streamValues.indexOf(currentSavedStream).takeIf { it >= 0 } ?: 0
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Set Default Volume")
+            .setSingleChoiceItems(streamNames, currentIndex) { dialog, which ->
+                prefs.edit().putInt("default_volume_stream", streamValues[which]).apply()
+                Toast.makeText(this, "Default set to ${streamNames[which]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showAppPickerDialog(tapCount: Int) {
+        val pm = packageManager
+        val intent = Intent(Intent.ACTION_MAIN, null).apply { addCategory(Intent.CATEGORY_LAUNCHER) }
+        val resolveInfos = pm.queryIntentActivities(intent, 0)
+
+        resolveInfos.sortBy { it.loadLabel(pm).toString().lowercase() }
+
+        val appNames = resolveInfos.map { it.loadLabel(pm).toString() }.toTypedArray()
+        val appPackages = resolveInfos.map { it.activityInfo.packageName }.toTypedArray()
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Select App to Launch")
+            .setItems(appNames) { _, which ->
+                val selectedPackage = appPackages[which]
+                getSharedPreferences("FloatingWallPrefs", Context.MODE_PRIVATE)
+                    .edit()
+                    .putString("package_$tapCount", selectedPackage)
+                    .apply()
+                Toast.makeText(this, "Mapped to: ${appNames[which]}", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun showHowToUseDialog() {
         MaterialAlertDialogBuilder(this)
             .setTitle("How to Use")
-            .setMessage("1. Tap 'Enable Accessibility' and turn on the Floating Wall shortcut to reveal the green button.\n\n2. Assign actions to 1, 2, or 3 taps using the dropdowns.\n\n3. Tap 'Optimize Battery' and allow the exemption so Samsung doesn't close the app in the background.")
+            .setMessage("1. Enable Accessibility to reveal the button.\n2. Configure actions and delays for your taps.\n3. Optimize Battery to run seamlessly.")
             .setPositiveButton("Got it", null)
             .show()
     }
 
     private fun showPrivacyPolicyDialog() {
-        val policyText = """
-            Privacy Policy for Floating Wall
-            
-            1. Data Collection
-            Floating Wall operates entirely locally on your device. We do not collect, store, or transmit any personal data, usage statistics, or analytics.
-            
-            2. Accessibility Service
-            This app requires the Android Accessibility Service to intercept on-screen button taps and execute system actions (like opening the volume panel or taking screenshots). It does NOT monitor your screen content, read your typing, or track your behavior across other apps.
-            
-            3. Open Source
-            The source code for this application is public. You can verify all functionality and data practices independently.
-        """.trimIndent()
-
         MaterialAlertDialogBuilder(this)
             .setTitle("Privacy Policy")
-            .setMessage(policyText)
+            .setMessage("Floating Wall operates entirely locally on your device. We do not collect, store, or transmit any data.")
             .setPositiveButton("Close", null)
             .show()
     }
